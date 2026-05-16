@@ -1,6 +1,26 @@
 {
+  "name": "question-board",
+  "version": "1.0.0",
+  "description": "- An app where we can post questions for our group",
+  "homepage": "https://github.com/japostadan/question-board#readme",
+  "bugs": {
+    "url": "https://github.com/japostadan/question-board/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/japostadan/question-board.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^5.2.1"
-  }
+  },
+  "devDependencies": {}
 }
