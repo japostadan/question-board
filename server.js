@@ -16,8 +16,15 @@ app.get("/api/hello", (req, res) => {
 
 // Mock data
   const questions = [
-    { id: 1, title: "What is Node.js?", content: "I want to know more about Node.js." },
-    { id: 2, title: "How to use Express?", content: "Can someone explain how to use Express?" },
+    { id: crypto.randomUUID(),
+      question: "What is Node.js?", 
+      votes: 0, 
+    },
+
+    { id: crypto.randomUUID,
+       question: "How to use Express?", 
+       votes: 0,
+       },
   ]
 
 // Fetch the questions posted
@@ -26,6 +33,19 @@ app.get("/questions", (req, res) => {
   res.json(questions);
 });
 
+app.post("/questions", (req, res) => {
+  const newQuestion = req.body.question
+  questions.push({
+    id: crypto.randomUUID(),
+    question: newQuestion,
+    votes: 0
+  })
+
+  res.json({ok: true})
+}), 
+
 app.listen(process.env.PORT || 3001, () => {
   console.error(`Server listening on port ${process.env.PORT || 3001}`);
 });
+ 
+
