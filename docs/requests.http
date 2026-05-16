@@ -1,0 +1,22 @@
+# Question Board — REST Client requests
+# Requires the VS Code "REST Client" extension (humao.rest-client)
+
+@baseUrl = http://localhost:3001
+@username = alice
+
+### Get all questions
+GET {{baseUrl}}/questions
+x-username: {{username}}
+
+### Post a new question
+POST {{baseUrl}}/questions
+x-username: {{username}}
+Content-Type: application/json
+
+{
+  "text": "What is the difference between let and const?"
+}
+
+### Upvote a question (replace the id below with a real one from GET /questions)
+POST {{baseUrl}}/questions/your-question-id-here/vote
+x-username: {{username}}
