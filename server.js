@@ -9,44 +9,23 @@ app.use(
 );
 app.use(express.json());
 
-const validateQuestion = (req, res, next) => {
-  const { title, content } = req.body;
-
-  if (!title || title.trim() === "") {
-    return res.status(400).json({ error: "Title is required" });
-  }
-
-  if (!content || content.trim() === "") {
-    return res.status(400).json({ error: "Content is required" });
-  }
-
-  if (title.length < 5) {
-    return res.status(400).json({ error: "Title must be at least 5 characters long" });
-  }
-
-  if (content.length < 10) {
-    return res.status(400).json({ error: "Content must be at least 10 characters long" });
-  }
-
-  next();
-};
-
 // Mock data
 const questions = [
-  { id: crypto.randomUUID(), question: "What is Node.js?", votes: 0 },
-  { id: crypto.randomUUID(), question: "How to use Express?", votes: 0 },
+  { id: crypto.randomUUID(), text: "What is Node.js?", votes: 0 },
+  { id: crypto.randomUUID(), text: "How to use Express?", votes: 0 },
 ];
 
-// Fetch the questions posted
 app.get("/questions", (req, res) => {
   res.json(questions);
 });
 
-app.post("/questions", validateQuestion, (req, res) => {
-  const { title, content } = req.body;
-  const newQuestion = { id: crypto.randomUUID(), title, content, votes: 0 };
+app.post("/questions", (req, res) => {
+  const { text } = req.body;
+  if (!text) return res.status(400).json({ error: "text is required" });
+
+  const newQuestion = { id: crypto.randomUUID(), text, votes: 0 };
   questions.push(newQuestion);
-  res.status(201).json({ message: "Question created successfully", question: newQuestion });
+  res.status(201).json(newQuestion);
 });
 
 app.listen(process.env.PORT || 3001, () => {
