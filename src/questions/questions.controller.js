@@ -12,3 +12,10 @@ export async function create(req, res) {
   const question = await questionsService.createQuestion(text);
   res.status(201).json(question);
 }
+
+export async function vote(req, res) {
+  const result = await questionsService.voteQuestion(req.params.id, req.user);
+  if (result === "not_found") return res.status(404).json({ error: "Question not found" });
+  if (result === "already_voted") return res.status(409).json({ error: "Already voted" });
+  res.json(result);
+}
