@@ -7,3 +7,7 @@ export async function listQuestions() {
 export async function createQuestion(text) {
   return questionsRepository.save({ text });
 }
+
+export async function voteQuestion(id, username) {
+  return questionsRepository.castVote(id, username);
+}

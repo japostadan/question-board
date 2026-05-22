@@ -6,11 +6,16 @@
 A post submitted by a User containing a text prompt for the group to see.
 - Fields: `id` (UUID), `text`, `votes` (count), `voterIds` (array of usernames), `createdAt` (ISO8601)
 - A Question belongs to the shared board; there is no concept of sessions or rooms yet.
+- Returned sorted by `votes` descending; ties broken by `createdAt` descending (newest first).
+
+### Layer naming convention
+The database stores fields in snake_case (`voter_ids`, `created_at`). The repository layer translates to camelCase before returning to the service. Service and controller layers never see DB column names.
 
 ### Vote
 An upvote action by a User on a Question.
-- One Vote per User per Question — enforced by checking `voterIds` before accepting an upvote.
+- One Vote per User per Question — enforced atomically in the database.
 - Votes are not retractable (no downvote, no undo).
+- The vote operation is a single atomic RPC call (`cast_vote`) that increments `votes` and appends the username to `voterIds` in one DB-side statement. It returns a discriminated result: `{ outcome: 'voted' | 'not_found' | 'already_voted', question: {...} | null }`. The repository translates this to the service's existing string signals.
 
 ### Test Framework
 Vitest. Same API as Jest but supports ESM natively — no config needed.
@@ -19,6 +24,9 @@ See ADR 0002.
 ### Database
 Supabase (PostgreSQL). Used from day one — no intermediate SQLite phase.
 See ADR 0001.
+- Client wrapped in `src/db.js`. All repository modules import from there — no module constructs its own client.
+- App fails fast on missing `SUPABASE_URL` or `SUPABASE_ANON_KEY` at module load time in `src/db.js`.
+- Tests run against a real Supabase test project (separate from prod). No mocks of database behaviour. Each test cleans up rows it creates.
 
 ### User
 A person who interacts with the board, identified by a self-reported username stored in localStorage.
