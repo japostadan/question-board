@@ -22,12 +22,12 @@ Go to the [GitHub issues](https://github.com/japostadan/question-board/issues). 
 
 ### 2. Create a branch
 
-Never commit directly to `main`. Create a branch named `yourname/short-description`:
+Never commit directly to `main`. Name the branch after the issue: `issue-NN-short-description`:
 
 ```bash
 git checkout main
 git pull
-git checkout -b alice/username-middleware
+git checkout -b issue-8-username-middleware
 ```
 
 ### 3. Write your tests first (TDD)
@@ -50,7 +50,7 @@ Each issue has acceptance criteria with specific test cases listed. Use those as
 When your branch is ready:
 
 ```bash
-git push -u origin alice/username-middleware
+git push -u origin issue-8-username-middleware
 ```
 
 Then open a PR on GitHub. In the PR description, reference the issue it closes:
@@ -76,10 +76,11 @@ Once approved, merge the PR into `main` on GitHub. Delete the branch after mergi
    npm install
    ```
 
-2. Copy `.env.example` to `.env` and fill in the Supabase credentials (ask the person working on issue #6):
+2. Copy `.env.example` to `.env` and fill in your Supabase credentials:
    ```bash
    cp .env.example .env
    ```
+   The `.env.example` file includes instructions for setting up the Supabase project and running the required SQL.
 
 3. Start the server:
    ```bash
