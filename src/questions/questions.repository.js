@@ -32,33 +32,14 @@ export async function save({ text }) {
   return normalize(data);
 }
 
-export async function findById(id) {
-  const { data, error } = await supabase
-    .from("questions")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (error) {
-    // PGRST116 = no rows returned — question genuinely not found
-    if (error.code === "PGRST116") return null;
-    throw error;
-  }
-  return normalize(data);
-}
-
-export async function castVote(id, username, currentVotes, currentVoterIds) {
-  const { data, error } = await supabase
-    .from("questions")
-    .update({
-      votes: currentVotes + 1,
-      voter_ids: [...currentVoterIds, username],
-    })
-    .eq("id", id)
-    .not("voter_ids", "cs", `{"${username}"}`)
-    .select()
-    .single();
+export async function castVote(id, username) {
+  const { data, error } = await supabase.rpc("cast_vote", {
+    question_id: id,
+    username,
+  });
 
   if (error) throw error;
-  return normalize(data);
+
+  if (data.outcome === "voted") return normalize(data.question);
+  return data.outcome;
 }
