@@ -13,9 +13,9 @@ The database stores fields in snake_case (`voter_ids`, `created_at`). The reposi
 
 ### Vote
 An upvote action by a User on a Question.
-- One Vote per User per Question — enforced by checking `voterIds` before accepting an upvote.
+- One Vote per User per Question — enforced atomically in the database.
 - Votes are not retractable (no downvote, no undo).
-- The duplicate-vote check and the vote increment happen in two queries: a `SELECT` to distinguish 404 (question missing) from 409 (already voted), then an atomic `UPDATE` that increments `votes` and appends the username to `voterIds` only if the user is not already present.
+- The vote operation is a single atomic RPC call (`cast_vote`) that increments `votes` and appends the username to `voterIds` in one DB-side statement. It returns a discriminated result: `{ outcome: 'voted' | 'not_found' | 'already_voted', question: {...} | null }`. The repository translates this to the service's existing string signals.
 
 ### Test Framework
 Vitest. Same API as Jest but supports ESM natively — no config needed.
