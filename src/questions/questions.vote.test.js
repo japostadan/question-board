@@ -41,6 +41,28 @@ describe("POST /questions/:id/vote", () => {
     expect(res.body.error).toBe("Already voted");
   });
 
+  it("allows two different users to both vote on the same question", async () => {
+    const created = await request(app)
+      .post("/questions")
+      .set("x-username", "alice")
+      .send({ text: "Multi-user vote question?" });
+    createdIds.push(created.body.id);
+
+    const resAlice = await request(app)
+      .post(`/questions/${created.body.id}/vote`)
+      .set("x-username", "alice");
+
+    const resBob = await request(app)
+      .post(`/questions/${created.body.id}/vote`)
+      .set("x-username", "bob");
+
+    expect(resAlice.status).toBe(200);
+    expect(resBob.status).toBe(200);
+    expect(resBob.body.votes).toBe(2);
+    expect(resBob.body.voterIds).toContain("alice");
+    expect(resBob.body.voterIds).toContain("bob");
+  });
+
   it("increments votes and appends username to voterIds", async () => {
     const created = await request(app)
       .post("/questions")
