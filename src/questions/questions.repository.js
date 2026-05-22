@@ -39,7 +39,11 @@ export async function findById(id) {
     .eq("id", id)
     .single();
 
-  if (error) return null;
+  if (error) {
+    // PGRST116 = no rows returned — question genuinely not found
+    if (error.code === "PGRST116") return null;
+    throw error;
+  }
   return normalize(data);
 }
 
@@ -55,6 +59,6 @@ export async function castVote(id, username, currentVotes, currentVoterIds) {
     .select()
     .single();
 
-  if (error) return null;
+  if (error) throw error;
   return normalize(data);
 }
